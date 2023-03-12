@@ -3,7 +3,8 @@ export const wrapAsync = (func) => {
     try {
       await func(req, res, next);
     } catch (error) {
-      res.status(500).json(error);
+      console.log("ERROR HANDLING");
+      res.status(500).json({ error: error.message, errorMes: "Error" });
     }
   };
 };

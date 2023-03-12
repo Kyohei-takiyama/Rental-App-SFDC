@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { preRegister } from "../controller/auth.js";
+import { login, preRegister, register } from "../controller/auth.js";
 
 const router = Router();
 
@@ -8,5 +8,7 @@ router.get("/", (req, res) => {
 });
 
 router.post("/pre-register", preRegister);
+router.post("/register", register);
+router.post("/login", login);
 
 export default router;

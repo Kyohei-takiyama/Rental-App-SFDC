@@ -37,11 +37,11 @@ const userSchema = new Schema(
     photo: {},
     role: {
       type: String,
-      default: ["Buyar"],
+      default: "Buyar",
       enum: ["Buyar", "Sellar", "Admin"],
     },
-    enquiredProperties: [{ type: ObjectId, ref: "Ad" }],
-    wishlist: [{ type: ObjectId, ref: "Ad" }],
+    enquiredProperties: [{ type: Schema.Types.ObjectId, ref: "Ad" }],
+    wishlist: [{ type: Schema.Types.ObjectId, ref: "Ad" }],
     restCode: "",
   },
   {

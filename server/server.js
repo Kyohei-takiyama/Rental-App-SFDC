@@ -5,6 +5,8 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 dotenv.config();
 
+import { constants } from "./config.js";
+
 const app = express();
 
 import authRouter from "./routes/auth.js";
@@ -17,7 +19,7 @@ app.use(morgan("dev"));
 app.use(cors());
 
 mongoose
-  .connect(process.env.MONGO_URI)
+  .connect(constants.MONGO_URI)
   .then(() => console.log("mongodb Connected"));
 
 app.use("/auth", authRouter);
