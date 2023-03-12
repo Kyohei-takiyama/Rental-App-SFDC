@@ -21,7 +21,7 @@ export const emailTemplate = (email, content, replyTo, subject) => {
       },
       Subject: {
         Charset: "UTF-8",
-        Data: "Test sending from SFDC app",
+        Data: subject,
       },
     },
   };
