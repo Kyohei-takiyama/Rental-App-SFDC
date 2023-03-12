@@ -20,4 +20,18 @@ const comparePassword = (password, hashed) => {
   return bcrypt.compare(password, hashed);
 };
 
-export { hashPassword, comparePassword };
+const generateJWTs = (userId, JWTSeacretKey) => {
+  // generate jwonwebtoken
+  const token = Jwt.sign({ _id: userId }, JWTSeacretKey, {
+    expiresIn: "1h",
+  });
+  const refreshToken = Jwt.sign({ _id: userId }, JWTSeacretKey, {
+    expiresIn: "7d",
+  });
+  return {
+    token,
+    refreshToken,
+  };
+};
+
+export { hashPassword, comparePassword, generateJWTs };
