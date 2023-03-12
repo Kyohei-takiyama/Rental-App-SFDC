@@ -5,7 +5,11 @@ import validator from "email-validator";
 import { wrapAsync } from "../utils/asyncWrapper.js";
 import * as config from "../config.js";
 import { emailTemplate } from "../helpers/email.js";
-import { hashPassword, comparePassword } from "../helpers/auth.js";
+import {
+  hashPassword,
+  comparePassword,
+  generateJWTs,
+} from "../helpers/auth.js";
 import User from "../model/User.js";
 
 const preRegister = wrapAsync(async (req, res) => {
@@ -76,7 +80,7 @@ const register = wrapAsync(async (req, res) => {
   const savedUser = await newUser.save();
 
   // generate jwonwebtoken
-  const { token, refreshToken } = generateTokens(
+  const { token, refreshToken } = generateJWTs(
     savedUser._id,
     config.constants.JWT_SEACRET_KEY
   );
@@ -101,7 +105,7 @@ const login = wrapAsync(async (req, res) => {
     throw new Error("パスワードが間違っています");
   }
   // create jwt token
-  const { token, refreshToken } = generateTokens(
+  const { token, refreshToken } = generateJWTs(
     userFindByEmail._id,
     config.constants.JWT_SEACRET_KEY
   );
@@ -111,19 +115,5 @@ const login = wrapAsync(async (req, res) => {
 
   return res.json({ token, refreshToken, userFindByEmail }).status(201);
 });
-
-function generateTokens(userId, JWTSeacretKey) {
-  // generate jwonwebtoken
-  const token = Jwt.sign({ _id: userId }, JWTSeacretKey, {
-    expiresIn: "1h",
-  });
-  const refreshToken = Jwt.sign({ _id: userId }, JWTSeacretKey, {
-    expiresIn: "7d",
-  });
-  return {
-    token,
-    refreshToken,
-  };
-}
 
 export { preRegister, register, login };
