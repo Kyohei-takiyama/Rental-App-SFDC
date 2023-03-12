@@ -85,6 +85,8 @@ const register = wrapAsync(async (req, res) => {
     config.constants.JWT_SEACRET_KEY
   );
 
+  console.log(token, refreshToken);
+
   savedUser.password = undefined;
   savedUser.restCode = undefined;
 
@@ -116,4 +118,64 @@ const login = wrapAsync(async (req, res) => {
   return res.json({ token, refreshToken, userFindByEmail }).status(201);
 });
 
-export { preRegister, register, login };
+const forgotPassword = wrapAsync(async (req, res) => {
+  const { email } = req.body;
+
+  // find user by email
+  const user = await User.findOne({ email });
+  if (!user) {
+    throw new Error(
+      "入力されたメールアドレスに一致するユーザが見つかりませんでした"
+    );
+  }
+
+  const resetCode = nanoid();
+  user.resetCode = resetCode;
+  const savedUser = await user.save();
+  const token = Jwt.sign({ resetCode }, config.constants.JWT_SEACRET_KEY, {
+    expiresIn: "1h",
+  });
+
+  // send email
+  config.AWSSES.sendEmail(
+    emailTemplate(
+      email,
+      `
+    <p>下記のリンクをクリックして、パスワードのリセットをお願いします</p>
+    <a href=${config.constants.CLIENT_URL}/auth/access-account/${token}>パスワードリセット</a>
+    `,
+      config.constants.REPLY_TO,
+      "パスワードリセット"
+    ),
+    (err, data) => {
+      if (err) {
+        console.log("ERROR::::", err);
+        return res.json({ ok: false });
+      }
+      console.log(data);
+      return res.json({ ok: true });
+    }
+  );
+});
+
+const accessAccount = wrapAsync(async (req, res) => {
+  const { resetCode } = Jwt.verify(
+    req.body.resetCode,
+    config.constants.JWT_SEACRET_KEY
+  );
+
+  const user = await User.findOneAndUpdate({ resetCode }, { resetCode: "" });
+
+  // generate jwonwebtoken
+  const { token, refreshToken } = generateJWTs(
+    user._id,
+    config.constants.JWT_SEACRET_KEY
+  );
+
+  user.password = undefined;
+  user.restCode = undefined;
+
+  return res.json({ token, refreshToken, user }).status(201);
+});
+
+export { preRegister, register, login, forgotPassword, accessAccount };
