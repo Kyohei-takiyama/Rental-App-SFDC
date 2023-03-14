@@ -7,6 +7,9 @@ import {
   accessAccount,
   refreshToken,
   currentUser,
+  publicProfile,
+  updatePassword,
+  updateProfile,
 } from "../controller/auth.js";
 import { requireSignin } from "../middleware/auth.js";
 
@@ -26,5 +29,9 @@ router.post("/access-account", accessAccount);
 // ================================================GET
 router.get("/refresh-token", refreshToken);
 router.get("/current-user", requireSignin, currentUser);
+router.get("/profile/:username", publicProfile);
+// ================================================PUT
+router.put("/update-password", requireSignin, updatePassword);
+router.put("/update-profile", requireSignin, updateProfile);
 
 export default router;

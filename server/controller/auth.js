@@ -201,6 +201,48 @@ const currentUser = wrapAsync(async (req, res) => {
   res.json(user);
 });
 
+const publicProfile = wrapAsync(async (req, res) => {
+  const username = req.params.username;
+  const user = await User.findOne({ username });
+  user.password = undefined;
+  user.restCode = undefined;
+
+  res.json(user);
+});
+
+const updatePassword = wrapAsync(async (req, res) => {
+  const { password } = req.body;
+
+  if (!password) {
+    throw new Error("パスワードが空白です");
+  }
+
+  const hashedPassword = await hashPassword(password);
+
+  const updatedUser = await User.findByIdAndUpdate(
+    req.user._id,
+    {
+      password: hashedPassword,
+    },
+    {
+      new: true,
+    }
+  );
+
+  res.json({ user: updatedUser });
+});
+
+const updateProfile = wrapAsync(async (req, res) => {
+  const user = await User.findByIdAndUpdate(req.user._id, req.body, {
+    new: true,
+  });
+
+  user.password = undefined;
+  user.restCode = undefined;
+
+  res.json({ user });
+});
+
 export {
   preRegister,
   register,
@@ -209,4 +251,7 @@ export {
   accessAccount,
   refreshToken,
   currentUser,
+  publicProfile,
+  updatePassword,
+  updateProfile,
 };
