@@ -21,6 +21,16 @@ const comparePassword = (password, hashed) => {
   return bcrypt.compare(password, hashed);
 };
 
+const responseUserAndTokens = (user, JWTSeacretKey) => {
+  // create jwt token
+  const { token, refreshToken } = generateJWTs(user._id, JWTSeacretKey);
+  // send response
+  user.password = undefined;
+  user.restCode = undefined;
+
+  return { token, refreshToken, user };
+};
+
 const generateJWTs = (userId, JWTSeacretKey) => {
   // generate jwonwebtoken
   const token = Jwt.sign({ _id: userId }, JWTSeacretKey, {
@@ -35,4 +45,4 @@ const generateJWTs = (userId, JWTSeacretKey) => {
   };
 };
 
-export { hashPassword, comparePassword, generateJWTs };
+export { hashPassword, comparePassword, responseUserAndTokens };

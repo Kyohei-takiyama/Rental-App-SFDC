@@ -8,7 +8,7 @@ import { emailTemplate } from "../helpers/email.js";
 import {
   hashPassword,
   comparePassword,
-  generateJWTs,
+  responseUserAndTokens,
 } from "../helpers/auth.js";
 import User from "../model/User.js";
 
@@ -80,17 +80,14 @@ const register = wrapAsync(async (req, res) => {
   const savedUser = await newUser.save();
 
   // generate jwonwebtoken
-  const { token, refreshToken } = generateJWTs(
-    savedUser._id,
+  const { token, refreshToken, user } = responseUserAndTokens(
+    savedUser,
     config.constants.JWT_SEACRET_KEY
   );
 
-  console.log(token, refreshToken);
+  console.log(token, refreshToken, user);
 
-  savedUser.password = undefined;
-  savedUser.restCode = undefined;
-
-  return res.json({ token, refreshToken, savedUser }).status(201);
+  return res.json({ token, refreshToken, user }).status(201);
 });
 
 const login = wrapAsync(async (req, res) => {
@@ -107,15 +104,12 @@ const login = wrapAsync(async (req, res) => {
     throw new Error("パスワードが間違っています");
   }
   // create jwt token
-  const { token, refreshToken } = generateJWTs(
-    userFindByEmail._id,
+  const { token, refreshToken, user } = responseUserAndTokens(
+    userFindByEmail,
     config.constants.JWT_SEACRET_KEY
   );
-  // send response
-  userFindByEmail.password = undefined;
-  userFindByEmail.restCode = undefined;
 
-  return res.json({ token, refreshToken, userFindByEmail }).status(201);
+  return res.json({ token, refreshToken, user }).status(201);
 });
 
 const forgotPassword = wrapAsync(async (req, res) => {
@@ -167,15 +161,52 @@ const accessAccount = wrapAsync(async (req, res) => {
   const user = await User.findOneAndUpdate({ resetCode }, { resetCode: "" });
 
   // generate jwonwebtoken
-  const { token, refreshToken } = generateJWTs(
-    user._id,
+  const {
+    token,
+    refreshToken,
+    user: responseUser,
+  } = responseUserAndTokens(user, config.constants.JWT_SEACRET_KEY);
+
+  return res.json({ token, refreshToken, responseUser }).status(201);
+});
+
+const refreshToken = wrapAsync(async (req, res) => {
+  const { _id } = Jwt.verify(
+    req.headers.refresh_token,
     config.constants.JWT_SEACRET_KEY
   );
+
+  // find user
+  const user = await User.findById(_id);
+
+  // create jwt token
+  const {
+    token,
+    refreshToken,
+    user: responseUser,
+  } = responseUserAndTokens(user, config.constants.JWT_SEACRET_KEY);
+  // send response
+  user.password = undefined;
+  user.restCode = undefined;
+
+  return res.json({ token, refreshToken, responseUser }).status(201);
+});
+
+const currentUser = wrapAsync(async (req, res) => {
+  const user = await User.findById(req.user._id);
 
   user.password = undefined;
   user.restCode = undefined;
 
-  return res.json({ token, refreshToken, user }).status(201);
+  res.json(user);
 });
 
-export { preRegister, register, login, forgotPassword, accessAccount };
+export {
+  preRegister,
+  register,
+  login,
+  forgotPassword,
+  accessAccount,
+  refreshToken,
+  currentUser,
+};
