@@ -20,19 +20,19 @@ const Main = () => {
             data-bs-toggle="dropdown"
           >
             User
+            <ul className="dropdown-menu">
+              <li>
+                <NavLink className="nav-link" to="/dashboard">
+                  Dashboard
+                </NavLink>
+              </li>
+              <li>
+                <NavLink className="nav-link" to="/logout">
+                  Logout
+                </NavLink>
+              </li>
+            </ul>
           </NavLink>
-          <ul className="dropdown-menu">
-            <li>
-              <NavLink className="nav-link" to="/dashboard">
-                Dashboard
-              </NavLink>
-            </li>
-            <li>
-              <NavLink className="nav-link" to="/logout">
-                Logout
-              </NavLink>
-            </li>
-          </ul>
         </li>
       </div>
     </nav>
