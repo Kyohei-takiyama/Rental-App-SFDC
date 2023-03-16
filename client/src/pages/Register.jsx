@@ -1,6 +1,6 @@
 import { useState } from "react";
 import axios from "axios";
-import { API } from "../config";
+import toast from "react-hot-toast";
 
 const Register = () => {
   const [email, setEmail] = useState("");
@@ -10,12 +10,21 @@ const Register = () => {
     try {
       e.preventDefault();
       // request to server
-      const res = await axios.post(`/auth/pre-register`, {
+      const { data } = await axios.post(`/auth/pre-register`, {
         email,
         password,
       });
-      console.log(res);
-    } catch {}
+      console.log(data);
+      if (!data?.ok) {
+        toast.error("メールアドレスとパスワードに入力の誤りがあります");
+        return;
+      }
+      toast.success(
+        "アカウント登録メールを送信しました！\nメールを確認し、アカウントの有効化をお願いします！"
+      );
+    } catch (e) {
+      toast.error("不明なエラーが発生しました");
+    }
   };
 
   return (
