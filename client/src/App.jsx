@@ -6,6 +6,7 @@ import Home from "./pages/Home";
 import Register from "./pages/Register";
 import { AuthProvider } from "./context/auth";
 import Main from "./components/Main";
+import AccountActivate from "./pages/auth/AccountActivate";
 
 function App() {
   return (
@@ -17,6 +18,10 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route
+            path="/auth/account-activate/:token"
+            element={<AccountActivate />}
+          />
         </Routes>
       </AuthProvider>
     </BrowserRouter>
