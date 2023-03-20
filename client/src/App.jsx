@@ -5,10 +5,13 @@ import Login from "./pages/Login";
 import Home from "./pages/Home";
 import Register from "./pages/Register";
 import { AuthProvider } from "./context/auth";
-import Main from "./components/Main";
+import Main from "./components/nav/Main";
 import AccountActivate from "./pages/auth/AccountActivate";
 import ForgotPassword from "./pages/auth/ForgotPassword";
 import AccessAccount from "./pages/auth/AccessAccount";
+import Dashboard from "./pages/user/Dashboard";
+import AdCreate from "./pages/user/ad/AdCreate";
+import PrivateRoutes from "./components/routes/PrivateRoutes";
 
 function App() {
   return (
@@ -29,6 +32,10 @@ function App() {
             path="/auth/access-account/:token"
             element={<AccessAccount />}
           />
+          <Route path="/" element={<PrivateRoutes />}>
+            <Route path="dashboard" element={<Dashboard />} />
+            <Route path="ad/create" element={<AdCreate />} />
+          </Route>
         </Routes>
       </AuthProvider>
     </BrowserRouter>
