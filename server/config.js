@@ -2,6 +2,7 @@ import SES from "aws-sdk/clients/ses.js";
 import S3 from "aws-sdk/clients/s3.js";
 import AWS from "aws-sdk";
 import dotenv from "dotenv";
+import Nodegeocoder from "node-geocoder";
 dotenv.config();
 
 export const constants = {
@@ -14,14 +15,22 @@ export const constants = {
   CLIENT_URL: "http://localhost:3000",
 };
 
-const awsConfig = {
-  accessKeyId: constants.AWS_ACCESS_KEY_ID,
-  secretAccessKey: constants.AWS_SECRET_ACCESS_KEY,
-  region: "ap-northeast-1",
-  apiVersion: "2010-12-01",
-};
+// const awsConfig = {
+//   accessKeyId: constants.AWS_ACCESS_KEY_ID,
+//   secretAccessKey: constants.AWS_SECRET_ACCESS_KEY,
+//   region: "ap-northeast-1",
+//   apiVersion: "2010-12-01",
+// };
 
 // export const AWSSES = new SES(awsConfig);
 AWS.config.update({ region: "ap-northeast-1" });
 export const AWSSES = new AWS.SES();
 export const AWSS3 = new AWS.S3();
+
+// node geocoder
+const options = {
+  provider: "google",
+  apiKey: process.env.GOOGLE_API_KEY, // for Mapquest, OpenCage, Google Premier
+  formatter: null, // 'gpx', 'string', ...
+};
+export const GOOGLE_GEOCODER = Nodegeocoder(options);
