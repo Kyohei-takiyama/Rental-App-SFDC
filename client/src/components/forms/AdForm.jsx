@@ -1,4 +1,7 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import toast from "react-hot-toast";
 import GooglePlacesAutocomplete from "react-google-places-autocomplete";
 import CurrencyInput from "react-currency-input-field";
 
@@ -16,11 +19,35 @@ const AdForm = ({ action, type }) => {
     bathrooms: "",
     carpark: "",
     landsize: "",
-    type: "",
     title: "",
     description: "",
     loading: false,
+    type,
+    action,
   });
+
+  const navigate = useNavigate();
+
+  const handleClick = async () => {
+    console.log("handleClicked");
+    try {
+      setAd({ ...ad, loading: true });
+      console.log(ad);
+      const { data } = await axios.post("/api/ad", ad);
+      console.log("ad create response => ", data);
+      if (data?.error) {
+        toast.error(data.error);
+        setAd({ ...ad, loading: false });
+        return;
+      }
+      toast.success("作成に成功しました！");
+      setAd({ ...ad, loading: false });
+      //   navigate("/dashboard");
+    } catch (err) {
+      console.error(err);
+      setAd({ ...ad, loading: false });
+    }
+  };
 
   return (
     <>
@@ -38,13 +65,15 @@ const AdForm = ({ action, type }) => {
           }}
         />
       </div>
-      <CurrencyInput
-        placeholder="金額を入力"
-        defaultValue={ad.price}
-        prefix="¥"
-        className="form-control mb-3"
-        onValueChange={(value) => setAd({ ...ad, price: value })}
-      />
+      <div style={{ marginTop: "80px" }}>
+        <CurrencyInput
+          placeholder="金額を入力"
+          defaultValue={ad.price}
+          prefix="¥"
+          className="form-control mb-3"
+          onValueChange={(value) => setAd({ ...ad, price: value })}
+        />
+      </div>
       <input
         type="number"
         min="0"
@@ -91,7 +120,9 @@ const AdForm = ({ action, type }) => {
       />
 
       <div className="d-flex justify-content-center align-items-center mt-4">
-        <button className="btn btn-primary col-3 ">完了</button>
+        <button onClick={handleClick} className="btn btn-primary col-3 ">
+          完了
+        </button>
       </div>
       <pre>{JSON.stringify(ad, null, 4)}</pre>
     </>
