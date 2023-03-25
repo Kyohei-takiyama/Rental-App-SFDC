@@ -23,6 +23,7 @@ const AuthProvider = ({ children }) => {
   axios.defaults.baseURL = API;
   axios.defaults.headers.common["token"] = auth.token;
   axios.defaults.headers.common["refresh_token"] = auth.refreshToken;
+  axios.defaults.headers.common["authorization"] = auth.token;
 
   axios.interceptors.response.use(
     (res) => {

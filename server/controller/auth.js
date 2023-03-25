@@ -13,7 +13,7 @@ import {
 import User from "../model/User.js";
 
 const preRegister = wrapAsync(async (req, res) => {
-  console.log(req.body);
+  console.log("request", req.body);
 
   const { email, password } = req.body;
 

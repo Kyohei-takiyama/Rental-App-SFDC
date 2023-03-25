@@ -1,4 +1,5 @@
 import SES from "aws-sdk/clients/ses.js";
+import S3 from "aws-sdk/clients/s3.js";
 import AWS from "aws-sdk";
 import dotenv from "dotenv";
 dotenv.config();
@@ -23,3 +24,4 @@ const awsConfig = {
 // export const AWSSES = new SES(awsConfig);
 AWS.config.update({ region: "ap-northeast-1" });
 export const AWSSES = new AWS.SES();
+export const AWSS3 = new AWS.S3();

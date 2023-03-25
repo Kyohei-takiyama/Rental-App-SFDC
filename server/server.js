@@ -10,11 +10,12 @@ import { constants } from "./config.js";
 const app = express();
 
 import authRouter from "./routes/auth.js";
+import adRouter from "./routes/ad.js";
 
 const PORT = process.env.PORT || 8000;
 
 // middleware
-app.use(express.json());
+app.use(express.json({ limit: "10mb" }));
 app.use(morgan("dev"));
 app.use(cors());
 
@@ -23,5 +24,6 @@ mongoose
   .then(() => console.log("mongodb Connected"));
 
 app.use("/auth", authRouter);
+app.use("/api", adRouter);
 
 app.listen(PORT, () => console.log(`Port is running ${PORT}`));
