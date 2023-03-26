@@ -75,6 +75,7 @@ const create = wrapAsync(async (req, res) => {
       type: "Point",
       cordinates: [geo[0].longitude, geo[0].latitude],
     },
+    slug: slugfy(`${type}-${address}-${price}-${nanoid(6)}`),
     googleMap: geo,
   });
   await ad.save();
@@ -94,4 +95,17 @@ const create = wrapAsync(async (req, res) => {
   res.json({ ad, user });
 });
 
-export { uploadImage, removeImage, create };
+const getAllAdds = wrapAsync(async (req, res) => {
+  const adsForSell = await Ad.find({ action: "Sell" })
+    .select("-googleMap -location -photo.Key -photo.key -photo.ETag")
+    .sort({ createdAt: -1 })
+    .limit(12);
+  const adsForRent = await Ad.find({ action: "Rent" })
+    .select("-googleMap -location -photo.Key -photo.key -photo.ETag")
+    .sort({ createdAt: -1 })
+    .limit(12);
+
+  res.json({ adsForSell, adsForRent });
+});
+
+export { uploadImage, removeImage, create, getAllAdds };

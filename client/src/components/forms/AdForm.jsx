@@ -32,7 +32,6 @@ const AdForm = ({ action, type }) => {
     console.log("handleClicked");
     try {
       setAd({ ...ad, loading: true });
-      console.log(ad);
       const { data } = await axios.post("/api/ad", ad);
       console.log("ad create response => ", data);
       if (data?.error) {
@@ -42,7 +41,7 @@ const AdForm = ({ action, type }) => {
       }
       toast.success("作成に成功しました！");
       setAd({ ...ad, loading: false });
-      //   navigate("/dashboard");
+      navigate("/dashboard");
     } catch (err) {
       console.error(err);
       setAd({ ...ad, loading: false });
@@ -74,30 +73,37 @@ const AdForm = ({ action, type }) => {
           onValueChange={(value) => setAd({ ...ad, price: value })}
         />
       </div>
-      <input
-        type="number"
-        min="0"
-        placeholder="ベッドルーム数"
-        className="form-control mb-3"
-        value={ad.bedrooms}
-        onChange={(e) => setAd({ ...ad, bedrooms: e.target.value })}
-      />
-      <input
-        type="number"
-        min="0"
-        placeholder="バスルーム数"
-        className="form-control mb-3"
-        value={ad.bathrooms}
-        onChange={(e) => setAd({ ...ad, bathrooms: e.target.value })}
-      />
-      <input
-        type="number"
-        min="0"
-        placeholder="駐車場数"
-        className="form-control mb-3"
-        value={ad.carpark}
-        onChange={(e) => setAd({ ...ad, carpark: e.target.value })}
-      />
+      {type === "House" ? (
+        <>
+          <input
+            type="number"
+            min="0"
+            placeholder="ベッドルーム数"
+            className="form-control mb-3"
+            value={ad.bedrooms}
+            onChange={(e) => setAd({ ...ad, bedrooms: e.target.value })}
+          />
+          <input
+            type="number"
+            min="0"
+            placeholder="バスルーム数"
+            className="form-control mb-3"
+            value={ad.bathrooms}
+            onChange={(e) => setAd({ ...ad, bathrooms: e.target.value })}
+          />
+          <input
+            type="number"
+            min="0"
+            placeholder="駐車場数"
+            className="form-control mb-3"
+            value={ad.carpark}
+            onChange={(e) => setAd({ ...ad, carpark: e.target.value })}
+          />
+        </>
+      ) : (
+        ""
+      )}
+
       <input
         type="text"
         placeholder="敷地面積"
@@ -120,11 +126,16 @@ const AdForm = ({ action, type }) => {
       />
 
       <div className="d-flex justify-content-center align-items-center mt-4">
-        <button onClick={handleClick} className="btn btn-primary col-3 ">
-          完了
+        <button
+          onClick={handleClick}
+          className={`btn btn-primary col-3 mb-5 ${
+            ad.loading ? "disabled" : ""
+          } `}
+        >
+          {ad.loading ? "保存中" : "完了"}
         </button>
       </div>
-      <pre>{JSON.stringify(ad, null, 4)}</pre>
+      {/* <pre>{JSON.stringify(ad, null, 4)}</pre> */}
     </>
   );
 };
