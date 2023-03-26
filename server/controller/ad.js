@@ -96,16 +96,16 @@ const create = wrapAsync(async (req, res) => {
 });
 
 const getAllAdds = wrapAsync(async (req, res) => {
-  const addForSell = await Ad.find({ action: "Sell" })
+  const adsForSell = await Ad.find({ action: "Sell" })
     .select("-googleMap -location -photo.Key -photo.key -photo.ETag")
     .sort({ createdAt: -1 })
     .limit(12);
-  const addForRent = await Ad.find({ action: "Rent" })
+  const adsForRent = await Ad.find({ action: "Rent" })
     .select("-googleMap -location -photo.Key -photo.key -photo.ETag")
     .sort({ createdAt: -1 })
     .limit(12);
 
-  res.json({ addForSell, addForRent });
+  res.json({ adsForSell, adsForRent });
 });
 
 export { uploadImage, removeImage, create, getAllAdds };
